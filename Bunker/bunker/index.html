@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunker - Spatial Intelligence for Earth's Data</title>
+    <meta name="description" content="Ask natural language questions about any location and receive AI-powered analysis with interactive maps showing real-time satellite, radar, and sensor data." />
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Prevent external scripts from interfering with our app -->
+    <script>
+      // Immediately block speed.js functions before any other scripts can run
+      (function() {
+        // Block speed.js specific functions immediately
+        window.threeXSpeed = function() { return; };
+        window.decSpeed = function() { return; };
+        window.incSpeed = function() { return; };
+        window.normalSpeed = function() { return; };
+        window.setSpeed = function() { return; };
+        
+        // Override document methods to prevent video element access
+        const originalGetElementsByTagName = document.getElementsByTagName;
+        const originalQuerySelector = document.querySelector;
+        const originalQuerySelectorAll = document.querySelectorAll;
+        
+        document.getElementsByTagName = function(tagName) {
+          if (tagName && tagName.toLowerCase() === 'video') {
+            return { length: 0, item: () => null, namedItem: () => null };
+          }
+          return originalGetElementsByTagName.call(this, tagName);
+        };
+        
+        document.querySelector = function(selector) {
+          if (selector && selector.includes('video')) {
+            return null;
+          }
+          return originalQuerySelector.call(this, selector);
+        };
+        
+        document.querySelectorAll = function(selector) {
+          if (selector && selector.includes('video')) {
+            return { length: 0, item: () => null, namedItem: () => null };
+          }
+          return originalQuerySelectorAll.call(this, selector);
+        };
+        
+        // Block any attempts to access video properties
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+          const element = originalCreateElement.call(this, tagName);
+          if (tagName && tagName.toLowerCase() === 'video') {
+            // Override video properties that speed.js tries to access
+            Object.defineProperty(element, 'playbackRate', {
+              get: () => 1,
+              set: () => {},
+              configurable: false
+            });
+          }
+          return element;
+        };
+        
+        // Global error handler to catch any remaining speed.js errors
+        window.addEventListener('error', function(event) {
+          if (event.message && (
+            event.message.includes('speed.js') ||
+            event.message.includes('playbackRate') ||
+            event.message.includes('Cannot read properties of null') ||
+            event.message.includes('Cannot set properties of null')
+          )) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
+        }, true);
+        
+        // Block speed.js from being loaded or executed
+        const originalAppendChild = Node.prototype.appendChild;
+        Node.prototype.appendChild = function(child) {
+          if (child && child.src && child.src.includes('speed.js')) {
+            return child;
+          }
+          return originalAppendChild.call(this, child);
+        };
+        
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
