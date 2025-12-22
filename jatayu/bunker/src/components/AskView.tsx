@@ -57,7 +57,7 @@ const AskView: React.FC<AskViewProps> = ({ onAnalyze }) => {
         >
       {/* Header */}
       <header className="text-center mb-8">
-        <h1 className="text-5xl font-bold text-white tracking-tight">Bunker</h1>
+        <h1 className="text-5xl font-bold text-white tracking-tight">JatayuX</h1>
         <p className="text-lg text-gray-400 mt-2">Spatial Intelligence for Earth's Data</p>
       </header>
 

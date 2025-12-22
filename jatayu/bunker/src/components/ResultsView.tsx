@@ -283,7 +283,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({
     >
       {/* Bunker Logo - Top Left Corner */}
       <div className="absolute top-6 left-6 z-10">
-        <h2 className="text-2xl font-semibold text-white">Bunker</h2>
+        <h2 className="text-2xl font-semibold text-white">JatayuX</h2>
       </div>
 
       {/* Dashboard Control Bar */}
