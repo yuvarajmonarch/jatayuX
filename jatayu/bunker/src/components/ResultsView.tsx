@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, MapPin, BarChart3, Satellite } from 'lucide-react';
+import { ArrowLeft, Send, MapPin, BarChart3, Satellite, FileText } from 'lucide-react'; // Added FileText
 import MapView from './MapView';
 import DataCharts from './DataCharts';
 import AnalyticsTabs from './AnalyticsTabs';
 import LocationQueryPanel from './LocationQueryPanel';
 import TerraMindInsights from './TerraMindInsights';
+import { ReportModal } from './ReportModal'; // Added ReportModal
 import { sendChatMessage, createChatMessage, type ChatMessage } from '../api/chat';
 
 // Helper function to determine analysis type from query
@@ -182,9 +183,12 @@ const ResultsView: React.FC<ResultsViewProps> = ({
   const [activeMapView, setActiveMapView] = useState<'map' | 'analytics' | 'ndvi' | 'terramind'>('map');
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
-  // Geotagging state
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showLocationPanel, setShowLocationPanel] = useState(false);
+
+
+  // NEW: State for the Report Modal
+  const [isReportOpen, setIsReportOpen] = useState(false);
 
   // Handle location selection from map
   const handleLocationSelect = (coordinates: { lat: number; lng: number }) => {
@@ -624,6 +628,58 @@ const ResultsView: React.FC<ResultsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* generate pdf button */}
+      {/* <button
+        onClick={() => setIsReportOpen(true)}
+        className="fixed bottom-8 right-8 z-50 flex items-center gap-3 px-6 py-4 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/50 backdrop-blur-xl text-blue-400 rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all duration-300 group hover:scale-105"
+      >
+        <div className="relative">
+          <FileText size={22} className="group-hover:rotate-12 transition-transform" />
+          <span className="absolute -top-1 -right-1 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+        </div>
+        <span className="font-bold tracking-tight uppercase text-xs">Generate Intelligence Brief</span>
+      </button> */}
+
+      <button
+  onClick={() => setIsReportOpen(true)}
+  className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-900/40 transition-all duration-300 hover:scale-110 active:scale-95 group"
+  title="Generate Intelligence Brief"
+>
+  <FileText size={20} className="group-hover:animate-pulse" />
+  
+  {/* Small notification dot to show status */}
+  <span className="absolute top-0 right-0 flex h-3 w-3">
+    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-400 border-2 border-slate-900"></span>
+  </span>
+</button>
+      
+      
+      {/* NEW: The Report Modal Module */}
+      <ReportModal 
+        isOpen={isReportOpen} 
+        data={{
+          locationName: analysisData.sources[0] || "Target Perimeter", // Use first source or default
+          modules: {
+            atmospheric: {
+              temp: analysisData.dataPoints.find(d => d.label.toLowerCase().includes('temp'))?.value || "N/A"
+            },
+            environmental: {
+              aqi: Number(analysisData.dataPoints.find(d => d.label.toLowerCase().includes('aqi'))?.value) || 0,
+              status: analysisData.riskLevel
+            },
+            satellite: {
+              lastScan: new Date().toLocaleTimeString(),
+              coordinates: coordinates ? `${coordinates.lat.toFixed(4)}, ${coordinates.lng.toFixed(4)}` : "0, 0"
+            }
+          }
+        }} 
+        onClose={() => setIsReportOpen(false)} 
+      />
     </motion.div>
   );
 };
