@@ -16,6 +16,7 @@ class TerraMindService {
    * Check if TerraMind service is available
    * @returns {Promise<boolean>} Service availability status
    */
+  
   async isServiceAvailable() {
     try {
       const response = await axios.get(`${this.serviceUrl}/health`, {

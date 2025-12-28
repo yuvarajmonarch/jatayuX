@@ -13,11 +13,11 @@ interface SatelliteImageryProps {
   className?: string;
 }
 
-const SatelliteImagery: React.FC<SatelliteImageryProps> = ({ 
-  center, 
-  bounds, 
+const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
+  center,
+  bounds,
   analysisType = 'satellite',
-  className = '' 
+  className = ''
 }) => {
   const [imageryData, setImageryData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -38,19 +38,17 @@ const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
 
   useEffect(() => {
     let isMounted = true;
-    
+
     const fetchSatelliteImagery = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        // Simulate API call for satellite imagery
-        // In a real implementation, this would call a satellite imagery API
+
+        // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         if (!isMounted) return;
-        
-        // Generate mock satellite imagery data
+
         const mockImageryData = {
           imageUrl: generateSatelliteImageUrl(center),
           timestamp: new Date().toISOString(),
@@ -61,7 +59,7 @@ const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
           bands: ['RGB', 'NIR', 'SWIR'],
           processingLevel: 'L2A'
         };
-        
+
         setImageryData(mockImageryData);
       } catch (err) {
         if (!isMounted) return;
@@ -75,31 +73,26 @@ const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
     };
 
     fetchSatelliteImagery();
-    
+
     return () => {
       isMounted = false;
     };
-  }, [center[0], center[1]]); // Only depend on actual coordinate values
+  }, [center[0], center[1]]);
 
   const generateSatelliteImageUrl = (center: [number, number]) => {
-    // Generate a mock satellite image URL based on coordinates
-    // In a real implementation, this would be a proper satellite imagery service
     const [lng, lat] = center;
     const zoom = 12;
-    
-    // Try Mapbox first, but have a fallback
+    const width = 512;
+    const height = 512;
+    const accessToken = "pk.eyJ1IjoieXV2YXJhamIwNDIiLCJhIjoiY21qcG52YTU0MDhwNDNkcXhoNTY5aHAxaCJ9.O62OHaPZBsxcW1qk7TuyKA";
+
     try {
-      const x = Math.floor((lng + 180) / 360 * Math.pow(2, zoom));
-      const y = Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
-      
-      return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/${zoom}/${x}/${y}?access_token=pk.eyJ1IjoibmlybWFsLTA3IiwiYSI6ImNtZnNqYW91NzBjN2EycXNoYTl6bWx6Ym8ifQ.pckER2f_OX6V10ttE5o3Pw`;
+      // Use Mapbox Static Images API
+      return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},${zoom}/${width}x${height}?access_token=${accessToken}`;
     } catch (error) {
-      // Fallback to a placeholder satellite image
       return `https://via.placeholder.com/512x512/1a1a1a/ffffff?text=Satellite+Imagery`;
     }
   };
-
-  // Removed unused getImageOverlay function
 
   if (loading) {
     return (
@@ -128,7 +121,7 @@ const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -145,7 +138,7 @@ const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
             setError('Failed to load image');
           }}
         />
-        
+
         {/* Polygon Overlay */}
         <div className="absolute inset-0 pointer-events-none">
           <svg className="w-full h-full">
@@ -167,28 +160,23 @@ const SatelliteImagery: React.FC<SatelliteImageryProps> = ({
           </svg>
         </div>
 
-        {/* Imagery Info Overlay */}
+        {/* Info Overlays */}
         <div className="absolute top-2 left-2 bg-black/60 backdrop-blur rounded px-2 py-1">
           <div className="text-white text-xs font-medium">{imageryData?.source}</div>
           <div className="text-gray-300 text-xs">{imageryData?.resolution}</div>
         </div>
 
-        {/* Cloud Cover Indicator */}
         <div className="absolute top-2 right-2 bg-black/60 backdrop-blur rounded px-2 py-1">
-          <div className="text-white text-xs">
-            ☁️ {imageryData?.cloudCover}%
-          </div>
+          <div className="text-white text-xs">☁️ {imageryData?.cloudCover}%</div>
         </div>
 
-        {/* Analysis Type Badge */}
         <div className="absolute bottom-2 left-2 bg-blue-600/80 backdrop-blur rounded px-2 py-1">
           <div className="text-white text-xs font-medium">
-            {analysisType === 'satellite' ? '🛰️ Satellite' : 
+            {analysisType === 'satellite' ? '🛰️ Satellite' :
              analysisType === 'analytics' ? '📊 Analytics' : '🌱 NDVI'}
           </div>
         </div>
 
-        {/* Timestamp */}
         <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur rounded px-2 py-1">
           <div className="text-gray-300 text-xs">
             {imageryData?.timestamp ? new Date(imageryData.timestamp).toLocaleDateString() : 'Recent'}
