@@ -28,7 +28,7 @@ ChartJS.register(
 
 interface DataChartsProps {
   analysisData: AnalysisData;
-  activeTab: 'analytics' | 'ndvi';
+  activeTab: 'map' | 'analytics' | 'ndvi' | 'terramind';
 }
 
 const DataCharts: React.FC<DataChartsProps> = ({ analysisData, activeTab }) => {

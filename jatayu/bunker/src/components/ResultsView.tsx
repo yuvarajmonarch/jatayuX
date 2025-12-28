@@ -90,6 +90,7 @@ interface AnalysisData {
   }>;
   recommendations?: string[];
   changeDetectionData?: any;
+  terraMindInsights?: any;
   satelliteImagery?: {
     success: boolean;
     coordinates: { lat: number; lng: number };
