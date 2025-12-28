@@ -9,9 +9,7 @@ interface TerraMindInsightsProps {
 }
 
 const TerraMindInsights: React.FC<TerraMindInsightsProps> = ({ 
-  terraMindData, 
-  coordinates 
-}) => {
+  terraMindData}) => {
   const [activeSection, setActiveSection] = useState<'landuse' | 'vegetation' | 'change' | 'environmental'>('landuse');
 
   const sections = [
@@ -22,14 +20,15 @@ const TerraMindInsights: React.FC<TerraMindInsightsProps> = ({
   ];
 
   const getColorClasses = (color: string, variant: 'bg' | 'text' | 'border') => {
-    const colors = {
-      blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500' },
-      green: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500' },
-      orange: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500' },
-      purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500' }
-    };
-    return colors[color]?.[variant] || colors.blue[variant];
+  const colors: any = { // Adding 'any' or specific key types fixes the index error
+    blue: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500' },
+    green: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500' },
+    orange: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500' },
+    purple: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500' }
+    
   };
+  return colors[color]?.[variant] || colors.blue[variant];
+};
 
   const renderLandUseClassification = () => {
     const data = terraMindData.landUseClassification;
@@ -269,7 +268,7 @@ const TerraMindInsights: React.FC<TerraMindInsightsProps> = ({
   };
 
   return (
-    <div className="bg-gray-900/40 backdrop-blur rounded-lg border border-gray-700/50 p-4">
+    <div className="bg-gray-900/40 backdrop-blur rounded-lg border border-gray-700/50 p-4 max-h-[600px] overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">

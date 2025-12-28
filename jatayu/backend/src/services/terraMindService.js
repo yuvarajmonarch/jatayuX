@@ -6,7 +6,7 @@ const axios = require('axios');
  */
 class TerraMindService {
   constructor() {
-    this.serviceUrl = process.env.TERRAMIND_SERVICE_URL || 'http://localhost:3002';
+    this.serviceUrl = process.env.TERRAMIND_SERVICE_URL || 'http://127.0.0.1:3002';
     this.timeout = 30000; // 30 seconds for complex geospatial analysis
     this.enabled = process.env.TERRAMIND_ENABLED !== 'false'; // Enable by default
     this.fallbackMode = true; // Graceful fallback if service unavailable
@@ -16,6 +16,7 @@ class TerraMindService {
    * Check if TerraMind service is available
    * @returns {Promise<boolean>} Service availability status
    */
+  
   async isServiceAvailable() {
     try {
       const response = await axios.get(`${this.serviceUrl}/health`, {
