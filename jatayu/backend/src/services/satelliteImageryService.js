@@ -189,7 +189,7 @@ class SatelliteImageryService {
     const tileX = Math.floor((lng + 180) / 360 * Math.pow(2, zoom));
     const tileY = Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom));
     
-    const mapboxToken = this.mapboxAccessToken || 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+    const mapboxToken = this.mapboxAccessToken || 'pk.eyJ1IjoieXV2YXJhamIwNDIiLCJhIjoiY21qcG52YTU0MDhwNDNkcXhoNTY5aHAxaCJ9.O62OHaPZBsxcW1qk7TuyKA';
     
     let url;
     switch (imageType) {
